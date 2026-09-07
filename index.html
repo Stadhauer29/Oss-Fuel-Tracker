@@ -45,6 +45,63 @@
     </style>
 </head>
 <body class="flex flex-col min-h-screen antialiased select-none pb-24">
+    <!-- PASSWORD LOCK SCREEN -->
+<div id="password-screen" class="fixed inset-0 z-[9999] bg-[#0b0f19] flex items-center justify-center px-5">
+    <div class="w-full max-w-sm">
+        <div class="bg-gradient-to-b from-gray-900 to-[#111827] border border-gray-800 rounded-2xl p-6 shadow-2xl">
+            
+            <div class="flex justify-center mb-5">
+                <div class="p-3 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-2xl text-white shadow-lg shadow-cyan-500/10">
+                    <i data-lucide="lock" class="w-7 h-7"></i>
+                </div>
+            </div>
+
+            <div class="text-center mb-6">
+                <h1 class="text-lg font-bold text-white">FUEL LOG</h1>
+                <p class="text-xs text-cyan-400 uppercase tracking-wider mt-1">
+                    On Site Shine Detailing
+                </p>
+                <p class="text-xs text-gray-500 mt-3">
+                    Enter your password to access the fuel log.
+                </p>
+            </div>
+
+            <form onsubmit="checkPassword(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1.5 uppercase tracking-wide">
+                        Password
+                    </label>
+
+                    <div class="relative">
+                        <i data-lucide="key-round"
+                           class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500">
+                        </i>
+
+                        <input
+                            type="password"
+                            id="password-input"
+                            placeholder="Enter password"
+                            autocomplete="current-password"
+                            class="w-full bg-gray-950/60 border border-gray-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/50 rounded-xl pl-9 pr-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-all"
+                        >
+                    </div>
+                </div>
+
+                <p id="password-error" class="hidden text-xs text-red-400 text-center">
+                    Incorrect password. Please try again.
+                </p>
+
+                <button
+                    type="submit"
+                    class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-semibold py-3.5 rounded-xl transition-all shadow-md shadow-cyan-500/10 flex items-center justify-center gap-2"
+                >
+                    <i data-lucide="unlock" class="w-4 h-4"></i>
+                    Unlock Fuel Log
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 
     <!-- Header Area -->
     <header class="sticky top-0 z-50 bg-[#0b0f19]/80 backdrop-blur-md border-b border-gray-800/60 px-4 pt-4 pb-3 safe-top">
@@ -223,19 +280,73 @@
 
     <!-- CORE FUNCTIONAL CORE LOGIC ENGINE -->
     <script>
+        // PASSWORD PROTECTION
+const ACCESS_PASSWORD = "ossd2003";
+
+function checkPassword(event) {
+    event.preventDefault();
+
+    const passwordInput = document.getElementById('password-input');
+    const passwordError = document.getElementById('password-error');
+    const passwordScreen = document.getElementById('password-screen');
+
+    if (passwordInput.value === ACCESS_PASSWORD) {
+
+        // Remember that the user has unlocked the app
+        sessionStorage.setItem('fuel_log_authenticated', 'true');
+
+        // Hide password screen
+        passwordScreen.classList.add('hidden');
+
+        // Clear password field
+        passwordInput.value = '';
+
+        passwordError.classList.add('hidden');
+
+    } else {
+
+        // Show error
+        passwordError.classList.remove('hidden');
+
+        // Clear incorrect password
+        passwordInput.value = '';
+
+        // Focus password field
+        passwordInput.focus();
+    }
+}
+
+// Check authentication when the page loads
+window.addEventListener('DOMContentLoaded', () => {
+
+    const authenticated = sessionStorage.getItem('fuel_log_authenticated');
+
+    if (authenticated === 'true') {
+        document.getElementById('password-screen').classList.add('hidden');
+    }
+
+    lucide.createIcons();
+});
         // Set fallback safe default logic for input date pickers to today's date
         document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
 
         // System storage repository array initialization
         let jobsRepo = [];
 
-        // App life-cycle entry point bootstrapper
-        window.addEventListener('DOMContentLoaded', () => {
-            loadFromLocalStorage();
-            lucide.createIcons(); // Initialize visual anchors
-            updateStatsView();
-            renderHistoryView();
-        });
+      // App life-cycle entry point bootstrapper
+window.addEventListener('DOMContentLoaded', () => {
+    loadFromLocalStorage();
+
+    const authenticated = sessionStorage.getItem('fuel_log_authenticated');
+
+    if (authenticated === 'true') {
+        document.getElementById('password-screen').classList.add('hidden');
+    }
+
+    lucide.createIcons();
+    updateStatsView();
+    renderHistoryView();
+});
 
         function loadFromLocalStorage() {
             try {
