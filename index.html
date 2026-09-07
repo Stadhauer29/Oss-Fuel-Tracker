@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Fuel Log | Detailing</title>
+    <!-- Tailwind CSS for functional utility -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons for aesthetic UI elements -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom smooth scrollbar for job lists */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 10px;
+        }
+        /* Soft glowing accents */
+        .glow-cyan {
+            box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.15);
+        }
+        /* Active bottom nav state styling */
+        .nav-active {
+            color: #06b6d4 !important;
+        }
+        .nav-active svg {
+            stroke: #06b6d4 !important;
+            fill: rgba(6, 182, 212, 0.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen antialiased select-none pb-24">
+
+    <!-- Header Area -->
+    <header class="sticky top-0 z-50 bg-[#0b0f19]/80 backdrop-blur-md border-b border-gray-800/60 px-4 pt-4 pb-3 safe-top">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="flex items-center gap-2.5">
+                <div class="p-2 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-xl text-white shadow-lg shadow-cyan-500/10">
+                    <i data-lucide="fuel" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold tracking-tight text-white">FUEL LOG</h1>
+                    <p class="text-[10px] font-medium text-cyan-400 tracking-wider uppercase">Mobile Detailing Pro</p>
+                </div>
+            </div>
+            <span class="text-xs bg-gray-800/80 border border-gray-700/50 px-2.5 py-1 rounded-full text-gray-300 font-medium">ZAR (R)</span>
+        </div>
+    </header>
+
+    <!-- Main Views Container -->
+    <main class="flex-1 max-w-md w-full mx-auto px-4 py-4 overflow-y-auto">
+        
+        <!-- VIEW 1: LOG ENTRY (Default View) -->
+        <section id="view-log" class="space-y-5 animate-fade-in">
+            <div class="bg-gradient-to-b from-gray-900 to-[#111827] border border-gray-800/80 rounded-2xl p-5 glow-cyan">
+                <h2 class="text-base font-semibold text-white mb-1">Log Fuel Transaction</h2>
+                <p class="text-xs text-gray-400 mb-5">Record fuel expenditure assigned to specific detailing contracts.</p>
+                
+                <form id="fuel-form" class="space-y-4" onsubmit="handleLogFuel(event)">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1.5 tracking-wide uppercase">Client / Job Name</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                            </span>
+                            <input type="text" id="job-name" required placeholder="e.g. BMW Fleet Clean" 
+                                class="w-full bg-gray-950/60 border border-gray-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/50 rounded-xl pl-9 pr-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1.5 tracking-wide uppercase">Fuel Cost (R)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 font-medium text-xs">R</span>
+                                <input type="number" step="0.01" min="0" id="fuel-cost" required placeholder="0.00" 
+                                    class="w-full bg-gray-950/60 border border-gray-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/50 rounded-xl pl-7 pr-3 py-3 text-sm text-white placeholder-gray-600 outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1.5 tracking-wide uppercase">Distance (km)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                                    <i data-lucide="milestone" class="w-4 h-4"></i>
+                                </span>
+                                <input type="number" step="0.1" min="0" id="distance" placeholder="Optional" 
+                                    class="w-full bg-gray-950/60 border border-gray-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/50 rounded-xl pl-9 pr-3 py-3 text-sm text-white placeholder-gray-600 outline-none transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1.5 tracking-wide uppercase">Transaction Date</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                                <i data-lucide="calendar" class="w-4 h-4"></i>
+                            </span>
+                            <input type="date" id="log-date"
+                                class="w-full bg-gray-950/60 border border-gray-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/50 rounded-xl pl-9 pr-4 py-3 text-sm text-white placeholder-gray-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-[0.99] text-white text-sm font-semibold py-3.5 px-4 rounded-xl transition-all shadow-md shadow-cyan-500/10 mt-2 flex items-center justify-center gap-2 cursor-pointer">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Save Transaction Record
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Toast notification area -->
+            <div id="toast-banner" class="hidden flex items-center gap-2.5 bg-emerald-950/40 border border-emerald-800/60 p-3.5 rounded-xl text-emerald-400 text-xs transition-all duration-300">
+                <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                <span id="toast-msg">Entry recorded safely.</span>
+            </div>
+        </section>
+
+        <!-- VIEW 2: ALL JOBS -->
+        <section id="view-history" class="hidden space-y-4 animate-fade-in">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-base font-semibold text-white">Transaction Logs</h2>
+                    <p class="text-xs text-gray-400">All historical logs sorted by date.</p>
+                </div>
+                <span id="job-counter" class="text-xs bg-gray-900 border border-gray-800 px-2.5 py-1 rounded-full font-medium text-gray-400">0 records</span>
+            </div>
+
+            <!-- Dynamic Job Log List Container -->
+            <div id="history-container" class="space-y-2.5 max-h-[70vh] overflow-y-auto custom-scroll pr-1">
+                <!-- Fallback view when empty -->
+                <div id="empty-state" class="py-12 text-center border border-dashed border-gray-800 rounded-2xl bg-gray-900/20">
+                    <i data-lucide="inbox" class="w-8 h-8 text-gray-600 mx-auto mb-2"></i>
+                    <p class="text-xs font-medium text-gray-500">No logs saved yet. Go fill out the log view.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: ANALYTICS STATS -->
+        <section id="view-stats" class="hidden space-y-4 animate-fade-in">
+            <div>
+                <h2 class="text-base font-semibold text-white">Business Intelligence</h2>
+                <p class="text-xs text-gray-400">Aggregated operating performance matrices.</p>
+            </div>
+
+            <!-- Primary Metrics Grid -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-4">
+                    <div class="flex items-center justify-between text-gray-500 mb-2">
+                        <span class="text-[10px] font-semibold tracking-wider uppercase">Cumulative Cost</span>
+                        <i data-lucide="wallet" class="w-3.5 h-3.5 text-cyan-400"></i>
+                    </div>
+                    <p id="stat-total-cost" class="text-lg font-bold text-white">R0.00</p>
+                </div>
+                <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-4">
+                    <div class="flex items-center justify-between text-gray-500 mb-2">
+                        <span class="text-[10px] font-semibold tracking-wider uppercase">Current Month</span>
+                        <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-blue-400"></i>
+                    </div>
+                    <p id="stat-month-cost" class="text-lg font-bold text-white">R0.00</p>
+                    <p id="stat-month-label" class="text-[9px] text-gray-500 mt-0.5">0 logs this month</p>
+                </div>
+                <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-4">
+                    <div class="flex items-center justify-between text-gray-500 mb-2">
+                        <span class="text-[10px] font-semibold tracking-wider uppercase">Mean Cost / Job</span>
+                        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-purple-400"></i>
+                    </div>
+                    <p id="stat-avg-cost" class="text-lg font-bold text-white">R0.00</p>
+                </div>
+                <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-4">
+                    <div class="flex items-center justify-between text-gray-500 mb-2">
+                        <span class="text-[10px] font-semibold tracking-wider uppercase">Distance Tracked</span>
+                        <i data-lucide="route" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    </div>
+                    <p id="stat-total-km" class="text-lg font-bold text-white">0.0 km</p>
+                </div>
+            </div>
+
+            <!-- Unit Economics Metric Bar -->
+            <div class="bg-gradient-to-r from-gray-900 to-cyan-950/20 border border-cyan-900/30 rounded-xl p-4 flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <span class="text-[10px] font-semibold tracking-wider text-cyan-400 uppercase">Unit Efficiency Metric</span>
+                    <p class="text-xs text-gray-400">Average operational expense per kilometre driven</p>
+                </div>
+                <div class="text-right">
+                    <p id="stat-cost-per-km" class="text-base font-bold text-cyan-400">R0.00/km</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Premium Mobile Bottom Tab Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0b0f19]/80 backdrop-blur-lg border-t border-gray-800/80 py-2.5 px-6 z-50 safe-bottom">
+        <div class="max-w-md mx-auto flex items-center justify-around">
+            <button onclick="switchView('log')" id="btn-nav-log" class="nav-active flex flex-col items-center gap-1 text-gray-500 font-medium text-[10px] transition-colors cursor-pointer">
+                <i data-lucide="plus-square" class="w-5 h-5 transition-transform active:scale-95"></i>
+                Log Spend
+            </button>
+            <button onclick="switchView('history')" id="btn-nav-history" class="flex flex-col items-center gap-1 text-gray-500 font-medium text-[10px] transition-colors cursor-pointer">
+                <i data-lucide="list-ordered" class="w-5 h-5 transition-transform active:scale-95"></i>
+                All Records
+            </button>
+            <button onclick="switchView('stats')" id="btn-nav-stats" class="flex flex-col items-center gap-1 text-gray-500 font-medium text-[10px] transition-colors cursor-pointer">
+                <i data-lucide="activity" class="w-5 h-5 transition-transform active:scale-95"></i>
+                Analytics
+            </button>
+        </div>
+    </nav>
+
+    <!-- CORE FUNCTIONAL CORE LOGIC ENGINE -->
+    <script>
+        // Set fallback safe default logic for input date pickers to today's date
+        document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+
+        // System storage repository array initialization
+        let jobsRepo = [];
+
+        // App life-cycle entry point bootstrapper
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            lucide.createIcons(); // Initialize visual anchors
+            updateStatsView();
+            renderHistoryView();
+        });
+
+        function loadFromLocalStorage() {
+            try {
+                const rawData = localStorage.getItem('fuel_log_data');
+                jobsRepo = rawData ? JSON.parse(rawData) : [];
+            } catch (e) {
+                console.error("Local data mapping parsing failure: ", e);
+                jobsRepo = [];
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('fuel_log_data', JSON.stringify(jobsRepo));
+            updateStatsView();
+            renderHistoryView();
+        }
+
+        function switchView(targetViewId) {
+            // Hide all layout view elements securely
+            document.getElementById('view-log').classList.add('hidden');
+            document.getElementById('view-history').classList.add('hidden');
+            document.getElementById('view-stats').classList.add('hidden');
+
+            // Reset navigation tab visually matching items
+            document.getElementById('btn-nav-log').classList.remove('nav-active');
+            document.getElementById('btn-nav-history').classList.remove('nav-active');
+            document.getElementById('btn-nav-stats').classList.remove('nav-active');
+
+            // Expose user target layout context path
+            document.getElementById(`view-${targetViewId}`).classList.remove('hidden');
+            document.getElementById(`btn-nav-${targetViewId}`).classList.add('nav-active');
+        }
+
+        function formatCurrency(amount) {
+            return "R" + parseFloat(amount).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function handleLogFuel(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('job-name').value.trim();
+            const costInput = parseFloat(document.getElementById('fuel-cost').value);
+            const kmInputRaw = document.getElementById('distance').value.trim();
+            let dateInput = document.getElementById('log-date').value;
+
+            if (!dateInput) {
+                dateInput = new Date().toISOString().split('T')[0];
+            }
+
+            const kmInput = kmInputRaw !== "" ? parseFloat(kmInputRaw) : null;
+
+            // Instantiation data model layout mapping definitions
+            const newRecord = {
+                id: 'job_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                name: nameInput,
+                date: dateInput,
+                cost: costInput,
+                km: kmInput
+            };
+
+            jobsRepo.push(newRecord);
+            saveToLocalStorage();
+
+            // Clear configuration data layout inputs safely
+            document.getElementById('job-name').value = '';
+            document.getElementById('fuel-cost').value = '';
+            document.getElementById('distance').value = '';
+            document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+
+            // Render toast element feedback visual alert
+            const toast = document.getElementById('toast-banner');
+            document.getElementById('toast-msg').innerText = `Saved: R${costInput.toFixed(2)} logged for ${nameInput}`;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        function deleteRecord(recordId) {
+            if (confirm("Are you sure you want to permanently delete this transaction entry?")) {
+                jobsRepo = jobsRepo.filter(item => item.id !== recordId);
+                saveToLocalStorage();
+            }
+        }
+
+        function renderHistoryView() {
+            const container = document.getElementById('history-container');
+            const counter = document.getElementById('job-counter');
+            
+            // Clean interface workspace
+            container.innerHTML = '';
+            
+            counter.innerText = `${jobsRepo.length} tracking record${jobsRepo.length === 1 ? '' : 's'}`;
+
+            if (jobsRepo.length === 0) {
+                container.innerHTML = `
+                    <div id="empty-state" class="py-12 text-center border border-dashed border-gray-800 rounded-2xl bg-gray-900/20">
+                        <i data-lucide="inbox" class="w-8 h-8 text-gray-600 mx-auto mb-2"></i>
+                        <p class="text-xs font-medium text-gray-500">No logs saved yet. Go fill out the log view.</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            // High aesthetic calendar hierarchy sorting arrays descending
+            const sortedRecords = [...jobsRepo].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedRecords.forEach(item => {
+                const distanceFragment = item.km ? `
+                    <div class="flex items-center gap-1 text-[11px] text-gray-400 bg-gray-950 px-2 py-0.5 rounded-md font-medium border border-gray-800/40">
+                        <i data-lucide="route" class="w-3 h-3 text-emerald-500"></i>
+                        <span>${parseFloat(item.km).toFixed(1)} km</span>
+                    </div>` : '';
+
+                const rowCard = document.createElement('div');
+                rowCard.className = "flex items-center justify-between p-3.5 bg-gray-900/40 border border-gray-800/60 rounded-xl hover:border-gray-700/60 transition-all";
+                rowCard.innerHTML = `
+                    <div class="flex flex-col gap-1 max-w-[70%]">
+                        <div class="text-xs font-semibold text-white tracking-wide truncate">${item.name}</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-gray-500 font-medium">${item.date}</span>
+                            ${distanceFragment}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-bold text-white tracking-tight">${formatCurrency(item.cost)}</span>
+                        <button onclick="deleteRecord('${item.id}')" class="text-gray-600 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-950/20 active:scale-90 transition-all cursor-pointer">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(rowCard);
+            });
+            
+            // Re-render structural vectors cleanly 
+            lucide.createIcons();
+        }
+
+        function updateStatsView() {
+            const totalCostEl = document.getElementById('stat-total-cost');
+            const monthCostEl = document.getElementById('stat-month-cost');
+            const monthLabelEl = document.getElementById('stat-month-label');
+            const avgCostEl = document.getElementById('stat-avg-cost');
+            const totalKmEl = document.getElementById('stat-total-km');
+            const costPerKmEl = document.getElementById('stat-cost-per-km');
+
+            if (jobsRepo.length === 0) {
+                totalCostEl.innerText = "R0.00";
+                monthCostEl.innerText = "R0.00";
+                monthLabelEl.innerText = "0 logs this month";
+                avgCostEl.innerText = "R0.00";
+                totalKmEl.innerText = "0.0 km";
+                costPerKmEl.innerText = "R0.00/km";
+                return;
+            }
+
+            const totalSpend = jobsRepo.reduce((sum, item) => sum + item.cost, 0);
+            totalCostEl.innerText = formatCurrency(totalSpend);
+
+            const averageSpend = totalSpend / jobsRepo.length;
+            avgCostEl.innerText = formatCurrency(averageSpend);
+
+            // Compute Current Calendar Month Scope Windows
+            const systemNow = new Date();
+            const activeMonth = systemNow.getMonth();
+            const activeYear = systemNow.getFullYear();
+
+            const targetMonthRecords = jobsRepo.filter(item => {
+                const itemDate = new Date(item.date);
+                return itemDate.getMonth() === activeMonth && itemDate.getFullYear() === activeYear;
+            });
+
+            const monthSpend = targetMonthRecords.reduce((sum, item) => sum + item.cost, 0);
+            monthCostEl.innerText = formatCurrency(monthSpend);
+            
+            const localizedMonthName = systemNow.toLocaleString('en-ZA', { month: 'long' });
+            monthLabelEl.innerText = `${targetMonthRecords.length} log${targetMonthRecords.length === 1 ? '' : 's'} in ${localizedMonthName}`;
+
+            // Compute Kilometres Unit Economics Metrics
+            const recordsWithKm = jobsRepo.filter(item => item.km !== null);
+            const totalDistance = recordsWithKm.reduce((sum, item) => sum + parseFloat(item.km), 0);
+            totalKmEl.innerText = `${totalDistance.toFixed(1)} km`;
+
+            if (totalDistance > 0) {
+                // To maintain alignment with Python engine logic: Total Cost / Total Tracked Kilometres
+                const performanceIndex = totalSpend / totalDistance;
+                costPerKmEl.innerText = `R${performanceIndex.toFixed(2)}/km`;
+            } else {
+                costPerKmEl.innerText = "R0.00/km";
+            }
+        }
+    </script>
+</body>
+</html>
